@@ -1,45 +1,23 @@
 const http = require('http');
 const fs = require('fs');
 
-const server = http.createServer((req, res) => {
-    console.log('request made');
-    console.log(req.url, req.method);
+const express = require('express');
+const app = express();
+const PORT = 8080;
 
-    //set header content type
-    res.setHeader('Content-Type', 'text/html');
 
-    let path = './pages/';
+app.get("/", (req, res) => res.sendFile(__dirname + "/pages/index.html"));
+app.get("/about", (req, res) => res.sendFile(__dirname + "/pages/about.html"));
+app.get("/contact-me", (req, res) => res.sendFile(__dirname + "/pages/contact-me.html"));
 
-    switch(req.url) {
-        case '/':
-            path += 'index.html';
-            break;
-
-        case '/about':
-            path += 'about.html';
-            break;
-        
-        case '/contact-me':
-            path += 'contact-me.html';
-            break;
-        
-        default:
-            path += '404.html';
-            break;
-    }
-
-    fs.readFile(path, (err, data) => {
-        if (err) {
-            console.log(err);
-        } else {
-            res.write(data);
-            res.end();
-        }
-    });
-
+app.use((req, res) => {
+    res.status(404).sendFile(__dirname + "/pages/404.html");
 })
 
-server.listen(8080, 'localhost', () => {
-    console.log('listening for requests on port 8080')
-});
-
+app.listen(PORT, (error) => {
+    if (error) {
+        throw error;
+    }
+    console.log(`My first Express app - listening on port ${PORT}!`);
+}
+)
